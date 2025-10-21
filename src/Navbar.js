@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import {Link} from "react-router-dom";
 import Slider from 'rc-slider';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -31,7 +32,7 @@ export default class Navbar extends Component {
       <header className='Navbar'>
       <div className='logo'>
          <img src={logo} alt="logo" className="logo-img" /> {/* ✅ Image tag */}
-        <a href='#'>colormind</a>
+        <Link to='/'>colormind</Link>
       </div>
       <div className='slider-container'>
         <span>Level : {level}</span>
