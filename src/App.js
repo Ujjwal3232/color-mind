@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Route, Routes, useParams } from "react-router-dom";
 import Palette from './Palette';
 import PaletteList from "./PaletteList";
+import SingleColorPalette from './SingleColorPalette';
 import seedColors from './seedColors';
 import { generatePalette } from './colorHelpers';
 
@@ -26,6 +27,10 @@ class App extends Component {
       <Routes>
         <Route path="/" element={<PaletteList palettes={seedColors}/>} />
         <Route path="/palette/:id" element={<PaletteWithParams />} />
+        <Route
+        path="/palette/:paletteId/:colorId"
+        element={<SingleColorPalette />}
+        />
       </Routes>
     );
   }
