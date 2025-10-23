@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ColorBox from "./ColorBox";
-
+import PaletteFooter from './PaletteFooter';
 import { generatePalette } from "./colorHelpers";
 import seedColors from "./seedColors";
 import Slider from "rc-slider";
@@ -42,6 +42,7 @@ class Palette extends Component {
           level={level}
           changeLevel={this.changeLevel}
           handleChange={this.changeFormat}
+          showingAllColors 
         />
         {/* Navbar goes here */}
         <div className="Palette-colors">
@@ -49,10 +50,7 @@ class Palette extends Component {
           {/* Bunch of colors boxes */}
         </div>
         {/* footer */}
-        <footer className="Palette-footer">
-         {paletteName}
-         <span className="emoji">{emoji}</span>
-        </footer>
+        <PaletteFooter paletteName={paletteName} emoji={emoji} />
       </div>
     );
   }
