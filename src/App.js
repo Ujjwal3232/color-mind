@@ -6,10 +6,10 @@ import SingleColorPalette from './SingleColorPalette';
 import seedColors from './seedColors';
 import { generatePalette } from './colorHelpers';
 
-// ✅ Wrapper functional component to access useParams
+// ✅ Wrapper for /palette/:id
 const PaletteWithParams = () => {
   const { id } = useParams();
-  
+
   const findPalette = (id) => {
     return seedColors.find(palette => palette.id === id);
   };
@@ -21,15 +21,33 @@ const PaletteWithParams = () => {
   );
 };
 
+// ✅ Wrapper for /palette/:paletteId/:colorId
+const SingleColorPaletteWrapper = () => {
+  const { paletteId, colorId } = useParams();
+
+  const findPalette = (id) => {
+    return seedColors.find(palette => palette.id === id);
+  };
+
+  const palette = generatePalette(findPalette(paletteId));
+
+  return (
+    <SingleColorPalette
+      palette={palette}
+      colorId={colorId} // pass colorId to filter single color
+    />
+  );
+};
+
 class App extends Component {
   render() {
     return (
       <Routes>
-        <Route path="/" element={<PaletteList palettes={seedColors}/>} />
+        <Route path="/" element={<PaletteList palettes={seedColors} />} />
         <Route path="/palette/:id" element={<PaletteWithParams />} />
         <Route
-        path="/palette/:paletteId/:colorId"
-        element={<SingleColorPalette />}
+          path="/palette/:paletteId/:colorId"
+          element={<SingleColorPaletteWrapper />}
         />
       </Routes>
     );
