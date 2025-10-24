@@ -20,16 +20,11 @@ function generatePalette(starterPalette) {
     let scale = generateScale(color.color, 10).reverse();
 
     for (let i in scale) {
-      // Format RGB and RGBA properly with commas
-      const rgb = chroma(scale[i])
-        .css()
-        .replaceAll(" ", ", ");
+      const rgb = chroma(scale[i]).css(); // Already valid "rgb(r, g, b)"
 
-      const rgba = chroma(scale[i])
-        .css()
-        .replace("rgb(", "rgba(")
-        .replace(")", ", 1.0)")
-        .replaceAll(" ", ", ");
+      // Proper RGBA conversion
+      const [r, g, b] = chroma(scale[i]).rgb();
+      const rgba = `rgba(${r}, ${g}, ${b}, 1.0)`;
 
       newPalette.colors[levels[i]].push({
         name: `${color.name} ${levels[i]}`,
