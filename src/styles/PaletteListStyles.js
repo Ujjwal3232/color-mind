@@ -1,3 +1,5 @@
+import { border, borderRadius, width } from "@mui/system";
+
 export default {
   root: {
     backgroundColor: "blue",
@@ -18,7 +20,13 @@ export default {
     width: "100%",
     justifyContent: "space-between",
     color: "white",
-    marginBottom: "1rem"
+    marginBottom: "1rem",
+    alignItems:"center",
+    '& a':{
+      color:"white",
+      textDecoration:"none",
+      
+    }
   },
   palettes: {
     boxSizing: "border-box",
