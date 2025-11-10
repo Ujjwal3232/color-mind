@@ -14,7 +14,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import {ChromePicker} from 'react-color';
 
 
-const drawerWidth = 500;
+const drawerWidth = 400;
 
 const Main = styled('main', {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -65,9 +65,13 @@ export default class NewPaletteForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
+      open: true,
       direction: 'ltr', // manually manage theme direction
+      currentColor:'teal',
+      colors:["purple","wheat"]
     };
+    this.updateCurrentColor = this.updateCurrentColor.bind(this) ;
+     this.addNewColor = this.addNewColor.bind(this) ;
   }
 
   handleDrawerOpen = () => {
@@ -77,7 +81,13 @@ export default class NewPaletteForm extends Component {
   handleDrawerClose = () => {
     this.setState({ open: false });
   };
-
+updateCurrentColor(newColor){
+  
+  this.setState({currentColor: newColor.hex});
+}
+addNewColor(){
+  this.setState({colors:[...this.state.colors,this.state.currentColor]});
+}
   render() {
     const { open, direction } = this.state;
     const theme = createTheme({ direction });
@@ -133,12 +143,16 @@ export default class NewPaletteForm extends Component {
             </Button>
             </div>
             <ChromePicker 
-               color={'purple'}
-               onChangeComplete={(newColor)=>console.log(newColor)
+               color={this.state.currentColor}
+               onChangeComplete={this.updateCurrentColor}
 
-               }
             />
-            <Button variant='contained' color='primary'>
+            <Button 
+                variant='contained' 
+                color='primary'
+                style={{backgroundColor:this.state.currentColor}}
+                onClick={this.addNewColor}
+                >
               Add Color
             </Button>
           </Drawer>
@@ -147,7 +161,11 @@ export default class NewPaletteForm extends Component {
 
           <Main open={open}>
             <DrawerHeader />
-            
+          <ul>
+            {this.state.colors.map(color=>(
+              <li style={{backgroundColor:color}}>{color}</li>
+            ))}
+          </ul>  
           </Main>
         </Box>
       </ThemeProvider>
