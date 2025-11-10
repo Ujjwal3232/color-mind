@@ -10,8 +10,9 @@ const Box = styled('div')(({ theme, color }) => ({
   position: "relative",
   cursor: "pointer",
   marginBottom: "-3.5px",
+  color:"black"
 }));
 
-export default function DraggableColorBox({ color }) {
-  return <Box color={color}>{color}</Box>;
+export default function DraggableColorBox({ color, name }) {
+  return <Box color={color}>{name}</Box>;
 }
