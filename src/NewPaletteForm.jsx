@@ -76,6 +76,7 @@ export default class NewPaletteForm extends Component {
     this.updateCurrentColor = this.updateCurrentColor.bind(this) ;
     this.addNewColor = this.addNewColor.bind(this) ;
     this.handleChange = this.handleChange.bind(this) ;
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
   
   componentDidMount() {
@@ -113,6 +114,18 @@ addNewColor(){
 handleChange(evt){
   this.setState({newName: evt.target.value})
 }
+handleSubmit(){
+     let newName = "New Test Palette"
+     const newPalette = {
+
+      paletteName:newName,
+      id:newName.toLowerCase().replace(/ /g,"-"),
+      colors:this.state.colors
+    }
+     this.props.handleSubmit(newPalette);
+      this.props.navigate("/");
+
+}
   render() {
     const { open, direction } = this.state;
     const theme = createTheme({ direction });
@@ -121,7 +134,7 @@ handleChange(evt){
       <ThemeProvider theme={theme}>
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />
-          <AppBar position="fixed" open={open}>
+          <AppBar position="fixed" open={open} color='default'>
             <Toolbar>
               <IconButton
                 color="inherit"
@@ -135,6 +148,7 @@ handleChange(evt){
               <Typography variant="h6" noWrap component="div">
                 New Palette Form
               </Typography>
+              <Button variant='contained' color="success" size="small" onClick={this.handleSubmit}>Save Palette</Button>
             </Toolbar>
           </AppBar>
           <Drawer
