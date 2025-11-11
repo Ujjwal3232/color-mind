@@ -7,24 +7,36 @@ import seedColors from './seedColors';
 import NewPaletteForm from './NewPaletteForm';
 import { generatePalette } from './colorHelpers';
 
-// ✅ Wrapper for /palette/new to inject navigate
-const NewPaletteFormWrapper = (props) => {
+// ✅ Wrapper for /palette/new to inject navigate (no `this` usage here)
+const NewPaletteFormWrapper = ({ palettes, handleSubmit }) => {
   const navigate = useNavigate();
-  return <NewPaletteForm {...props} navigate={navigate} />;
+  return <NewPaletteForm palettes={palettes} handleSubmit={handleSubmit} navigate={navigate} />;
 };
 
 // ✅ Wrapper for /palette/:id (fetch palette by id)
 const PaletteWithParams = ({ findPalette }) => {
   const { id } = useParams();
   const palette = findPalette(id);
+
+  // 🛡 Safety check: handle invalid IDs gracefully
+  if (!palette) {
+    return <h2 style={{ color: 'red', textAlign: 'center' }}>Palette not found!</h2>;
+  }
+
   return <Palette palette={generatePalette(palette)} />;
 };
 
 // ✅ Wrapper for /palette/:paletteId/:colorId (fetch color from palette)
 const SingleColorPaletteWrapper = ({ findPalette }) => {
   const { paletteId, colorId } = useParams();
-  const palette = generatePalette(findPalette(paletteId));
-  return <SingleColorPalette palette={palette} colorId={colorId} />;
+  const palette = findPalette(paletteId);
+
+  if (!palette) {
+    return <h2 style={{ color: 'red', textAlign: 'center' }}>Palette not found!</h2>;
+  }
+
+  const generatedPalette = generatePalette(palette);
+  return <SingleColorPalette palette={generatedPalette} colorId={colorId} />;
 };
 
 class App extends Component {
@@ -52,10 +64,13 @@ class App extends Component {
         {/* ✅ New Palette Form Route */}
         <Route
           path="/palette/new"
-          element={<NewPaletteFormWrapper handleSubmit={this.savePalette} />}
+          element={
+            <NewPaletteFormWrapper
+              palettes={this.state.palettes}
+              handleSubmit={this.savePalette}
+            />
+          }
         />
-
-        {/* its order matter in v5 not in v6 */}
 
         {/* ✅ Palette List Route */}
         <Route
