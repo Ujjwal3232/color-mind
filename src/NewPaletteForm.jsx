@@ -13,6 +13,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import DraggableColorBox from './DraggableColorBox';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
+import DraggableColorList from "./DraggableColorList";
 import { ChromePicker } from 'react-color';
 
 const drawerWidth = 400;
@@ -79,6 +80,8 @@ export default class NewPaletteForm extends Component {
     this.addNewColor = this.addNewColor.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.removeColor = this.removeColor.bind(this);
+
   }
 
   componentDidMount() {
@@ -148,7 +151,9 @@ export default class NewPaletteForm extends Component {
       colors: this.state.colors.filter(color => color.name !== colorName)
     });
   }
-
+  onSortEnd = (newColors) => {
+  this.setState({ colors: newColors });
+};
   render() {
     const { open, direction } = this.state;
     const theme = createTheme({ direction });
@@ -262,14 +267,11 @@ export default class NewPaletteForm extends Component {
           <Main open={open}>
             <DrawerHeader />
 
-            {this.state.colors.map(color => (
-              <DraggableColorBox
-                key={color.name}
-                color={color.color}
-                name={color.name}
-                handleClick={() => this.removeColor(color.name)}
-              />
-            ))}
+            <DraggableColorList
+             colors={this.state.colors}
+             removeColor={this.removeColor}
+             onSortEnd={this.onSortEnd}
+            />
           </Main>
         </Box>
       </ThemeProvider>
