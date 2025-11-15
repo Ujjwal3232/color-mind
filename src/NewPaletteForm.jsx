@@ -11,7 +11,6 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import DraggableColorBox from './DraggableColorBox';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import DraggableColorList from "./DraggableColorList";
 import { ChromePicker } from 'react-color';
@@ -65,6 +64,9 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 // 🌈 Converted functional logic to class-based
 export default class NewPaletteForm extends Component {
+  static defaultProps = {
+     maxColors: 50
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -72,7 +74,7 @@ export default class NewPaletteForm extends Component {
       direction: 'ltr', // manually manage theme direction
       currentColor: 'teal',
       newColorName: "",
-      colors: [],
+      colors: this.props.palettes[0].colors,
       newPaletteName: ""
     };
 
@@ -81,7 +83,9 @@ export default class NewPaletteForm extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.removeColor = this.removeColor.bind(this);
-
+    this.clearColors = this.clearColors.bind(this);
+    this.addRandomColor = this.addRandomColor.bind(this);
+    this.addRandomColor = this.addRandomColor.bind(this);
   }
 
   componentDidMount() {
@@ -132,7 +136,17 @@ export default class NewPaletteForm extends Component {
       [evt.target.name]: evt.target.value
     });
   }
-
+  
+  clearColors(){
+    this.setState({colors:[]});
+  }
+  addRandomColor(){
+     const allColors = this.props.palettes.map(p=> p.colors).flat();
+     var rand = Math.floor(Math.random() * allColors.length);
+     const randomColor = allColors[rand];
+     this.setState({colors:[...this.state.colors, randomColor]});
+          
+  }
   handleSubmit() {
     let newName = this.state.newPaletteName;
 
@@ -155,8 +169,10 @@ export default class NewPaletteForm extends Component {
   this.setState({ colors: newColors });
 };
   render() {
-    const { open, direction } = this.state;
+    const { open, direction ,colors} = this.state;
+    const {maxColors} = this.props;
     const theme = createTheme({ direction });
+    const paletteFull = colors.length >= maxColors;
 
     return (
       <ThemeProvider theme={theme}>
@@ -227,10 +243,20 @@ export default class NewPaletteForm extends Component {
             </Typography>
 
             <div>
-              <Button variant="contained" color="secondary">
+              <Button 
+                     variant="contained" 
+                     color="secondary"
+                     onClick={this.clearColors}
+                     >
                 Clear Palette
               </Button>
-              <Button variant="contained" color="primary">
+              <Button 
+                   variant="contained" 
+                   color={paletteFull? "grey":"primary"}
+                   onClick={this.addRandomColor}
+                   
+                   disabled ={paletteFull}
+                   >
                 Random Color
               </Button>
             </div>
@@ -256,10 +282,12 @@ export default class NewPaletteForm extends Component {
               <Button
                 variant="contained"
                 color="primary"
-                style={{ backgroundColor: this.state.currentColor }}
+                style={{ backgroundColor: paletteFull? "grey":this.state.currentColor }}
+                disabled ={paletteFull}
                 type="submit"
-              >
-                Add Color
+              > 
+                {paletteFull ? "Palettefull" : "Add Color"}
+                
               </Button>
             </ValidatorForm>
           </Drawer>
