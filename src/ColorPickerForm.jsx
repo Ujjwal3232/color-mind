@@ -2,6 +2,14 @@ import React, { Component } from 'react';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import { ChromePicker } from 'react-color';
 import Button from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
+
+// ⭐ New styled TextValidator
+const InputField = styled(TextValidator)(({ theme }) => ({
+  width: "100%",
+  height: "70px",
+  marginTop: theme.spacing(2)
+}));
 
 export default class ColorPickerForm extends Component {
   constructor(props) {
@@ -39,14 +47,17 @@ export default class ColorPickerForm extends Component {
     const { paletteFull } = this.props;
 
     return (
-      <div style={{ padding: "1rem" , alignItems:"center",justifyContent:"center"}}>
-        <ChromePicker
-          color={this.state.currentColor}
-          onChangeComplete={this.updateColor}
-        />
+      <div style={{ padding: "1rem", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <ChromePicker
+            color={this.state.currentColor}
+            onChangeComplete={this.updateColor}
+          />
+        </div>
+
 
         <ValidatorForm onSubmit={this.handleSubmit} instantValidate={false}>
-          <TextValidator
+          <InputField
             value={this.state.newColorName}
             name="newColorName"
             onChange={this.handleChange}
@@ -56,7 +67,6 @@ export default class ColorPickerForm extends Component {
               'Color name must be unique',
               'Color already used'
             ]}
-            style={{ width: "100%", marginTop: "1rem" }}
             placeholder="Color Name"
           />
 

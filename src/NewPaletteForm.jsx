@@ -13,8 +13,19 @@ import Typography from '@mui/material/Typography';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 import DraggableColorList from "./DraggableColorList";
 
-
 const drawerWidth = 400;
+
+// ⭐ Added styled for Clear/Random buttons
+const ButtonContainer = styled('div')({
+  width: "100%",
+  display: "flex",
+  gap: "1rem",
+  padding: "1rem 0"
+});
+
+const HalfButton = styled(Button)({
+  width: "50%"
+});
 
 const Main = styled('main', {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -157,7 +168,6 @@ export default class NewPaletteForm extends Component {
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />
 
-          {/* FIXED — Props passed correctly */}
           <PaletteFormNav
             open={open}
             palettes={this.props.palettes}
@@ -186,28 +196,32 @@ export default class NewPaletteForm extends Component {
 
             <Divider />
 
-            <Typography variant="h4">
-              Design Your Palette
+            {/* ⭐ Added gutterBottom */}
+            <Typography variant="h4" gutterBottom align="center">
+             Design Your Palette
             </Typography>
 
-            <div>
-              <Button
+
+            {/* ⭐ Updated styles for 50-50 buttons */}
+            <ButtonContainer>
+              <HalfButton
                 variant="contained"
                 color="secondary"
                 onClick={this.clearColors}
               >
                 Clear Palette
-              </Button>
+              </HalfButton>
 
-              <Button
+              <HalfButton
                 variant="contained"
                 color={paletteFull ? "grey" : "primary"}
                 onClick={this.addRandomColor}
                 disabled={paletteFull}
               >
                 Random Color
-              </Button>
-            </div>
+              </HalfButton>
+            </ButtonContainer>
+
             <ColorPickerForm
               paletteFull={paletteFull}
               currentColor={this.state.currentColor}
@@ -216,8 +230,6 @@ export default class NewPaletteForm extends Component {
               newColorName={this.state.newColorName}
               handleChange={this.handleChange}
             />
-
-            
           </Drawer>
 
           <Main open={open}>
