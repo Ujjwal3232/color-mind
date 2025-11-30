@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PaletteMetaForm from "./PaletteMetaForm";
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiAppBar from "@mui/material/AppBar";
@@ -7,7 +8,6 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Button from "@mui/material/Button";
-import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { Link } from "react-router-dom";
 
 const drawerWidth = 400;
@@ -41,9 +41,10 @@ export default class PaletteFormNav extends Component {
     this.setState({ [evt.target.name]: evt.target.value });
   }
 
-  submitLocal() {
-    this.props.handleSubmit(this.state.newPaletteName);
+  submitLocal(name) {
+    this.props.handleSubmit(name);
   }
+
 
   render() {
     const { open, handleDrawerOpen } = this.props;
@@ -66,40 +67,29 @@ export default class PaletteFormNav extends Component {
               <MenuIcon />
             </IconButton>
 
+            {/* Left Heading */}
             <Typography variant="h6" noWrap component="div">
               New Palette
             </Typography>
 
-            {/* Palette Name + Save */}
-            <ValidatorForm
-              onSubmit={this.submitLocal}
-              style={{ marginLeft: "auto", display: "flex", gap: "10px" }}
-            >
-              <TextValidator
-                name="newPaletteName"
-                label="Palette Name"
-                value={this.state.newPaletteName}
-                onChange={this.handleChange}
-                validators={["required", "isPaletteNameUnique"]}
-                errorMessages={["Enter Palette Name", "Name already used"]}
-              />
+            {/* FLEX SPACE — pushes buttons to the right */}
+            <div style={{ flexGrow: 1 }} />
 
-              <Button variant="contained" color="success" type="submit" size="small">
-                Save Palette
+            {/* RIGHT BUTTON GROUP */}
+            <div style={{ display: "flex", gap: "10px", width: "260px" }}>
+              <PaletteMetaForm handleSubmitPalette={this.submitLocal} />
+
+              <Button
+                variant="contained"
+                color="secondary"
+                component={Link}
+                to="/"
+                style={{ textDecoration: "none", color: "white", flex: 1 }}
+              >
+                Go Home
               </Button>
+            </div>
 
-             <Button
-               variant="contained"
-               color="secondary"
-               component={Link}
-               to="/"
-               style={{ textDecoration: "none", color: "white" }}
-             >
-               Go Home
-             </Button>
-
-
-            </ValidatorForm>
           </Toolbar>
         </AppBar>
       </div>
