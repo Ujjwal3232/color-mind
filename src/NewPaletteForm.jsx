@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 import DraggableColorList from "./DraggableColorList";
 
-const drawerWidth = 400;
+const drawerWidth = 300;
 
 // ⭐ Added styled for Clear/Random buttons
 const ButtonContainer = styled('div')({
