@@ -12,8 +12,9 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Typography from '@mui/material/Typography';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 import DraggableColorList from "./DraggableColorList";
+import { DRAWER_WIDTH } from './styles/constants';
 
-const drawerWidth = 300;
+const drawerWidth = DRAWER_WIDTH;
 
 // ⭐ Added styled for Clear/Random buttons
 const ButtonContainer = styled('div')({
@@ -32,7 +33,7 @@ const Main = styled('main', {
 })(({ theme, open }) => ({
   flexGrow: 1,
   height: "100vh",
-  padding: theme.spacing(3),
+  padding: theme.spacing(0),
   transition: theme.transitions.create('margin', {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -200,6 +201,10 @@ handleSubmit(paletteData) {
               '& .MuiDrawer-paper': {
                 width: drawerWidth,
                 boxSizing: 'border-box',
+                backgroundColor: "#562156",
+                border: "1px solid #A9DEA9",
+                borderRadius: "0 10px 10px 0",
+                opacity: 0.95,
               },
             }}
             variant="persistent"
@@ -215,7 +220,12 @@ handleSubmit(paletteData) {
             <Divider />
 
             {/* ⭐ Added gutterBottom */}
-            <Typography variant="h4" gutterBottom align="center">
+            <Typography variant="h4" gutterBottom align="center" sx={{
+        
+             color: "#A9DEA9",
+             borderTop: "1px solid #A9DEA9",
+         
+         }}>
              Design Your Palette
             </Typography>
 

@@ -6,11 +6,13 @@ import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
+import PaletteIcon from "@mui/icons-material/Palette";
+import BrushIcon from "@mui/icons-material/Brush";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
+import { DRAWER_WIDTH } from "./styles/constants";
 
-const drawerWidth = 300;
+const drawerWidth = DRAWER_WIDTH;
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -55,18 +57,38 @@ export default class PaletteFormNav extends Component {
       <div>
         <CssBaseline />
 
-        <AppBar position="fixed" open={open} color="default">
+        <AppBar
+        position="fixed"
+        open={open}
+        sx={{
+        backgroundColor: "#562156",
+        border: "1px solid #A9DEA9",
+        borderRadius: "0 0 10px 10px",
+        opacity: 0.95,
+         }}
+        >
+
           <Toolbar>
 
             {/* Drawer Button */}
             <IconButton
-              color="inherit"
               aria-label="open drawer"
               onClick={handleDrawerOpen}
               edge="start"
-              sx={{ mr: 2, ...(open && { display: "none" }) }}
+              sx={{
+                mr: 2,
+                ...(open && { display: "none" }),
+                "& svg": {
+                  color: "#A9DEA9", // sky blue icon
+                  filter: `
+                    drop-shadow(0 0 4px #000000)
+                    drop-shadow(0 0 8px #A9DEA9)
+                  `,
+                },
+              }}
             >
-              <MenuIcon />
+              <PaletteIcon sx={{ fontSize: 26 }} />
+             <BrushIcon sx={{ fontSize: 16, ml: -1, mt: 1 }} />
             </IconButton>
 
             {/* Left Heading */}
