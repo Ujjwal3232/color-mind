@@ -17,6 +17,15 @@ function MiniPalette(props) {
 
   return (
     <div className={classes.root} onClick={props.handleClick}>
+      {/* 🔴 DELETE BUTTON (TOP-RIGHT CORNER) */}
+      <div className={classes.delete}>
+      <div className={classes.trash}>
+       <div className={classes.lid}></div>
+       <div className={classes.can}></div>
+       </div>
+       </div>
+
+
       <div className={classes.colors}>
         {miniColorBoxes}
       </div>
