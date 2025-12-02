@@ -41,17 +41,35 @@ const SingleColorPaletteWrapper = ({ findPalette }) => {
 
 class App extends Component {
   constructor(props) {
-    super(props);
-    this.state = { palettes: seedColors };
+  super(props);
 
-    this.savePalette = this.savePalette.bind(this);
-    this.findPalette = this.findPalette.bind(this);
-  }
+  const savedPalettes = JSON.parse(window.localStorage.getItem("palettes"));
+
+  this.state = { 
+    palettes: savedPalettes || seedColors
+  };
+
+  this.savePalette = this.savePalette.bind(this);
+  this.findPalette = this.findPalette.bind(this);
+  this.syncLocalStorage = this.syncLocalStorage.bind(this);
+}
+
 
   // ✅ Save new palette to state
   savePalette(newPalette) {
-    this.setState({ palettes: [...this.state.palettes, newPalette] });
-  }
+  this.setState(
+    { palettes: [...this.state.palettes, newPalette] },
+    this.syncLocalStorage // callback runs AFTER state updates
+  );
+}
+  // ✅ Sync palettes to localStorage
+  syncLocalStorage() {
+  window.localStorage.setItem(
+    "palettes",
+    JSON.stringify(this.state.palettes)
+  );
+}
+
 
   // ✅ Find palette by id
   findPalette(id) {
