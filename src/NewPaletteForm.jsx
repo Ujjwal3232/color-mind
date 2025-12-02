@@ -136,16 +136,34 @@ export default class NewPaletteForm extends Component {
     this.setState({ colors: [...this.state.colors, randomColor] });
   }
 
-  handleSubmit(paletteNameFromNav) {
-    const finalName = paletteNameFromNav;
-    const newPalette = {
-      paletteName: finalName,
-      id: finalName.toLowerCase().replace(/ /g, "-"),
-      colors: this.state.colors
-    };
-    this.props.handleSubmit(newPalette);
+  // New handleSubmit in NewPaletteForm
+handleSubmit(paletteData) {
+  // Ensure paletteData.paletteName is a string
+  const finalName = String((paletteData && paletteData.paletteName) || "").trim();
+
+  if (!finalName) {
+    // Optional: show an error or just return
+    console.error("Palette name missing.");
+    return;
+  }
+
+  const newPalette = {
+    paletteName: finalName,
+    emoji: paletteData.emoji || "", // keep emoji if provided
+    id: finalName.toLowerCase().replace(/ /g, "-"),
+    colors: this.state.colors
+  };
+
+  // Call the parent's save handler (whatever it is in your app)
+  // In your earlier code you used this.props.handleSubmit, keep that
+  this.props.handleSubmit(newPalette);
+
+  // Navigate back to home (your project used this.props.navigate)
+  if (this.props.navigate) {
     this.props.navigate("/");
   }
+}
+
 
   removeColor(colorName) {
     this.setState({

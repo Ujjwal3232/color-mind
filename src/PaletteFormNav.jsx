@@ -41,9 +41,11 @@ export default class PaletteFormNav extends Component {
     this.setState({ [evt.target.name]: evt.target.value });
   }
 
-  submitLocal(name) {
-    this.props.handleSubmit(name);
-  }
+  // Replace the old submitLocal method with this
+   submitLocal = (paletteData) => {
+     // paletteData is an object: { paletteName: "...", emoji: "..." }
+     this.props.handleSubmit(paletteData);
+   };
 
 
   render() {

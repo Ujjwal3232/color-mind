@@ -9,50 +9,57 @@ import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 
-
-
 export default class PaletteMetaForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
+      stage: "", // "", "form", "emoji"
       newPaletteName: "",
     };
 
     this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleClickOpen = this.handleClickOpen.bind(this);
-    this.handleClose = this.handleClose.bind(this);
+    this.savePalette = this.savePalette.bind(this);
   }
 
   componentDidMount() {
-    ValidatorForm.addValidationRule("isPaletteNameUnique", (value) => {
-      return this.props.palettes.every(
-        (palette) =>
-          palette.paletteName.toLowerCase() !== value.toLowerCase()
-      );
-    });
+    ValidatorForm.addValidationRule("isPaletteNameUnique", (value) =>
+      this.props.palettes.every(
+        ({ paletteName }) =>
+          paletteName.toLowerCase() !== value.toLowerCase()
+      )
+    );
   }
 
   handleChange(evt) {
     this.setState({ [evt.target.name]: evt.target.value });
   }
 
-  handleSubmit() {
-    this.props.handleSubmitPalette(this.state.newPaletteName);
-    this.handleClose();
-  }
+  handleClickOpen = () => {
+    this.setState({ stage: "form" });
+  };
 
-  handleClickOpen() {
-    this.setState({ open: true });
-  }
+  closeAll = () => {
+    this.setState({ stage: "" });
+  };
 
-  handleClose() {
-    this.setState({ open: false });
+  showEmojiPicker = () => {
+    this.setState({ stage: "emoji" });
+  };
+
+  savePalette(emojiObj) {
+    const newPalette = {
+      paletteName: this.state.newPaletteName.trim(),
+      emoji: emojiObj.native,
+    };
+
+    // ⬇️ Send full object upward
+    this.props.handleSubmitPalette(newPalette);
+
+    this.closeAll();
   }
 
   render() {
-    const { open, newPaletteName } = this.state;
+    const { newPaletteName, stage } = this.state;
 
     return (
       <>
@@ -60,18 +67,16 @@ export default class PaletteMetaForm extends Component {
           Save Palette
         </Button>
 
-        <Dialog open={open} onClose={this.handleClose}>
+        {/* NAME ENTRY DIALOG */}
+        <Dialog open={stage === "form"} onClose={this.closeAll}>
           <DialogTitle>Choose a Palette Name</DialogTitle>
 
           <DialogContent>
             <DialogContentText>
               Please enter a unique name for your new color palette.
             </DialogContentText>
-            <Picker data={data} onEmojiSelect={(emoji) => console.log(emoji)} />
 
-
-            {/* VALIDATION FORM */}
-            <ValidatorForm onSubmit={this.handleSubmit}>
+            <ValidatorForm onSubmit={this.showEmojiPicker}>
               <TextValidator
                 label="Palette Name"
                 name="newPaletteName"
@@ -80,17 +85,26 @@ export default class PaletteMetaForm extends Component {
                 value={newPaletteName}
                 onChange={this.handleChange}
                 validators={["required", "isPaletteNameUnique"]}
-                errorMessages={["Enter Palette Name", "Name already used"]}
+                errorMessages={[
+                  "Enter Palette Name",
+                  "Name already used",
+                ]}
               />
 
               <DialogActions>
-                <Button onClick={this.handleClose}>Cancel</Button>
+                <Button onClick={this.closeAll}>Cancel</Button>
                 <Button variant="contained" color="success" type="submit">
-                  Save Palette
+                  Next
                 </Button>
               </DialogActions>
             </ValidatorForm>
           </DialogContent>
+        </Dialog>
+
+        {/* EMOJI PICKER DIALOG */}
+        <Dialog open={stage === "emoji"} onClose={this.closeAll}>
+          <DialogTitle>Choose an Emoji</DialogTitle>
+          <Picker data={data} onEmojiSelect={this.savePalette} />
         </Dialog>
       </>
     );
