@@ -6,6 +6,10 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
+import Picker from "@emoji-mart/react";
+import data from "@emoji-mart/data";
+
+
 
 export default class PaletteMetaForm extends Component {
   constructor(props) {
@@ -63,6 +67,8 @@ export default class PaletteMetaForm extends Component {
             <DialogContentText>
               Please enter a unique name for your new color palette.
             </DialogContentText>
+            <Picker data={data} onEmojiSelect={(emoji) => console.log(emoji)} />
+
 
             {/* VALIDATION FORM */}
             <ValidatorForm onSubmit={this.handleSubmit}>
