@@ -5,14 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import styles from './styles/PaletteListStyles';
 
-
 class PaletteList extends Component {
   goToPalette(id) {
-    this.props.navigate(`/palette/${id}`); // ✅ works in v6
+    this.props.navigate(`/palette/${id}`);
   }
 
   render() {
-    const { palettes, classes } = this.props;
+    const { palettes, classes, deletePalette } = this.props;
 
     return (
       <div className={classes.root}>
@@ -26,8 +25,15 @@ class PaletteList extends Component {
             {palettes.map(palette => (
               <MiniPalette
                 key={palette.id}
-                {...palette}
+                id={palette.id}
+                paletteName={palette.paletteName}
+                emoji={palette.emoji}
+                colors={palette.colors}
+
                 handleClick={() => this.goToPalette(palette.id)}
+
+                // 🗑️ Pass delete method down to MiniPalette
+                deletePalette={deletePalette}
               />
             ))}
           </div>
@@ -37,7 +43,7 @@ class PaletteList extends Component {
   }
 }
 
-// ✅ Wrapper function to pass `navigate` prop to class component
+// Wrapper to inject navigate
 const PaletteListWithNavigate = (props) => {
   const navigate = useNavigate();
   return <PaletteList {...props} navigate={navigate} />;

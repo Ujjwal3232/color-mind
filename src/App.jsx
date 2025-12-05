@@ -7,18 +7,23 @@ import seedColors from './seedColors';
 import NewPaletteForm from './NewPaletteForm';
 import { generatePalette } from './colorHelpers';
 
-// ✅ Wrapper for /palette/new to inject navigate (no `this` usage here)
+// Wrapper for /palette/new
 const NewPaletteFormWrapper = ({ palettes, handleSubmit }) => {
   const navigate = useNavigate();
-  return <NewPaletteForm palettes={palettes} handleSubmit={handleSubmit} navigate={navigate} />;
+  return (
+    <NewPaletteForm
+      palettes={palettes}
+      handleSubmit={handleSubmit}
+      navigate={navigate}
+    />
+  );
 };
 
-// ✅ Wrapper for /palette/:id (fetch palette by id)
+// Wrapper for /palette/:id
 const PaletteWithParams = ({ findPalette }) => {
   const { id } = useParams();
   const palette = findPalette(id);
 
-  // 🛡 Safety check: handle invalid IDs gracefully
   if (!palette) {
     return <h2 style={{ color: 'red', textAlign: 'center' }}>Palette not found!</h2>;
   }
@@ -26,7 +31,7 @@ const PaletteWithParams = ({ findPalette }) => {
   return <Palette palette={generatePalette(palette)} />;
 };
 
-// ✅ Wrapper for /palette/:paletteId/:colorId (fetch color from palette)
+// Wrapper for /palette/:paletteId/:colorId
 const SingleColorPaletteWrapper = ({ findPalette }) => {
   const { paletteId, colorId } = useParams();
   const palette = findPalette(paletteId);
@@ -41,45 +46,55 @@ const SingleColorPaletteWrapper = ({ findPalette }) => {
 
 class App extends Component {
   constructor(props) {
-  super(props);
+    super(props);
 
-  const savedPalettes = JSON.parse(window.localStorage.getItem("palettes"));
+    const savedPalettes = JSON.parse(window.localStorage.getItem("palettes"));
 
-  this.state = { 
-    palettes: savedPalettes || seedColors
-  };
+    this.state = {
+      palettes: savedPalettes || seedColors
+    };
 
-  this.savePalette = this.savePalette.bind(this);
-  this.findPalette = this.findPalette.bind(this);
-  this.syncLocalStorage = this.syncLocalStorage.bind(this);
-}
+    this.savePalette = this.savePalette.bind(this);
+    this.findPalette = this.findPalette.bind(this);
+    this.syncLocalStorage = this.syncLocalStorage.bind(this);
+    this.deletePalette = this.deletePalette.bind(this);   // ✅ ADDED
+  }
 
-
-  // ✅ Save new palette to state
+  // Save palette
   savePalette(newPalette) {
-  this.setState(
-    { palettes: [...this.state.palettes, newPalette] },
-    this.syncLocalStorage // callback runs AFTER state updates
-  );
-}
-  // ✅ Sync palettes to localStorage
+    this.setState(
+      { palettes: [...this.state.palettes, newPalette] },
+      this.syncLocalStorage
+    );
+  }
+
+  // Delete palette
+  deletePalette(id) {
+    this.setState(
+      {
+        palettes: this.state.palettes.filter(p => p.id !== id)
+      },
+      this.syncLocalStorage
+    );
+  }
+
+  // Sync with localStorage
   syncLocalStorage() {
-  window.localStorage.setItem(
-    "palettes",
-    JSON.stringify(this.state.palettes)
-  );
-}
+    window.localStorage.setItem(
+      "palettes",
+      JSON.stringify(this.state.palettes)
+    );
+  }
 
-
-  // ✅ Find palette by id
+  // Find palette
   findPalette(id) {
-    return this.state.palettes.find((palette) => palette.id === id);
+    return this.state.palettes.find(palette => palette.id === id);
   }
 
   render() {
     return (
       <Routes>
-        {/* ✅ New Palette Form Route */}
+        {/* New Palette */}
         <Route
           path="/palette/new"
           element={
@@ -90,19 +105,24 @@ class App extends Component {
           }
         />
 
-        {/* ✅ Palette List Route */}
+        {/* Home: Palette List */}
         <Route
           path="/"
-          element={<PaletteList palettes={this.state.palettes} />}
+          element={
+            <PaletteList
+              palettes={this.state.palettes}
+              deletePalette={this.deletePalette}   // ✅ FIXED
+            />
+          }
         />
 
-        {/* ✅ Palette View Route */}
+        {/* Full Palette */}
         <Route
           path="/palette/:id"
           element={<PaletteWithParams findPalette={this.findPalette} />}
         />
 
-        {/* ✅ Single Color Palette Route */}
+        {/* Single Color Palette */}
         <Route
           path="/palette/:paletteId/:colorId"
           element={<SingleColorPaletteWrapper findPalette={this.findPalette} />}
