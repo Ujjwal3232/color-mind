@@ -1,3 +1,4 @@
+// src/NewPaletteForm.jsx
 import React, { Component } from 'react';
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import PaletteFormNav from './PaletteFormNav';
@@ -16,7 +17,7 @@ import { DRAWER_WIDTH } from './styles/constants';
 
 const drawerWidth = DRAWER_WIDTH;
 
-// ⭐ Added styled for Clear/Random buttons
+// Styled buttons container
 const ButtonContainer = styled('div')({
   width: "100%",
   display: "flex",
@@ -28,25 +29,25 @@ const HalfButton = styled(Button)({
   width: "50%"
 });
 
-const Main = styled('main', {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  flexGrow: 1,
-  height: "100vh",
-  padding: theme.spacing(0),
-  transition: theme.transitions.create('margin', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  marginLeft: `-${drawerWidth}px`,
-  ...(open && {
+const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
+  ({ theme, open }) => ({
+    flexGrow: 1,
+    height: "100vh",
+    padding: theme.spacing(0),
     transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: 0,
-  }),
-}));
+    marginLeft: `-${drawerWidth}px`,
+    ...(open && {
+      transition: theme.transitions.create('margin', {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+      marginLeft: 0,
+    }),
+  })
+);
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -68,8 +69,9 @@ export default class NewPaletteForm extends Component {
       direction: 'ltr',
       currentColor: 'teal',
       newColorName: "",
-      colors: this.props.palettes[0].colors,
-      newPaletteName: ""
+      colors: this.props.palettes[0]?.colors || [],
+      newPaletteName: "",
+      aiInstructions: null // store AI instruction HTML
     };
 
     this.updateCurrentColor = this.updateCurrentColor.bind(this);
@@ -82,7 +84,6 @@ export default class NewPaletteForm extends Component {
   }
 
   componentDidMount() {
-
     ValidatorForm.addValidationRule('isColorNameUnique', (value) =>
       this.state.colors.every(
         ({ name }) => name.toLowerCase() !== value.toLowerCase()
@@ -132,39 +133,10 @@ export default class NewPaletteForm extends Component {
 
   addRandomColor() {
     const allColors = this.props.palettes.map(p => p.colors).flat();
-    let rand = Math.floor(Math.random() * allColors.length);
+    const rand = Math.floor(Math.random() * allColors.length);
     const randomColor = allColors[rand];
     this.setState({ colors: [...this.state.colors, randomColor] });
   }
-
-  // New handleSubmit in NewPaletteForm
-handleSubmit(paletteData) {
-  // Ensure paletteData.paletteName is a string
-  const finalName = String((paletteData && paletteData.paletteName) || "").trim();
-
-  if (!finalName) {
-    // Optional: show an error or just return
-    console.error("Palette name missing.");
-    return;
-  }
-
-  const newPalette = {
-    paletteName: finalName,
-    emoji: paletteData.emoji || "", // keep emoji if provided
-    id: finalName.toLowerCase().replace(/ /g, "-"),
-    colors: this.state.colors
-  };
-
-  // Call the parent's save handler (whatever it is in your app)
-  // In your earlier code you used this.props.handleSubmit, keep that
-  this.props.handleSubmit(newPalette);
-
-  // Navigate back to home (your project used this.props.navigate)
-  if (this.props.navigate) {
-    this.props.navigate("/");
-  }
-}
-
 
   removeColor(colorName) {
     this.setState({
@@ -174,6 +146,37 @@ handleSubmit(paletteData) {
 
   onSortEnd = (newColors) => {
     this.setState({ colors: newColors });
+  };
+
+  // ✅ Updated handleSubmit: send palette to App.jsx
+  handleSubmit(paletteData) {
+    const finalName = String((paletteData?.paletteName || "").trim());
+    if (!finalName) return;
+
+    const newPalette = {
+      paletteName: finalName,
+      emoji: paletteData.emoji || "",
+      id: finalName.toLowerCase().replace(/ /g, "-"),
+      colors: this.state.colors
+    };
+
+    this.props.handleSubmit(newPalette); // App.jsx -> MongoDB
+
+    // Navigate back to home
+    if (this.props.navigate) {
+      this.props.navigate("/");
+    }
+  }
+
+  // AI palette response handler
+  handleAIResponse = (aiResponse) => {
+    const { palette, instruction } = aiResponse;
+
+    this.setState({
+      colors: palette.colors,
+      newPaletteName: palette.paletteName || "",
+      aiInstructions: instruction?.html || null
+    });
   };
 
   render() {
@@ -192,6 +195,8 @@ handleSubmit(paletteData) {
             palettes={this.props.palettes}
             handleDrawerOpen={this.handleDrawerOpen}
             handleSubmit={this.handleSubmit}
+            onAIResponse={this.handleAIResponse}
+            aiInstructions={this.state.aiInstructions}
           />
 
           <Drawer
@@ -219,18 +224,13 @@ handleSubmit(paletteData) {
 
             <Divider />
 
-            {/* ⭐ Added gutterBottom */}
             <Typography variant="h4" gutterBottom align="center" sx={{
-        
-             color: "#A9DEA9",
-             borderTop: "1px solid #A9DEA9",
-         
-         }}>
-             Design Your Palette
+              color: "#A9DEA9",
+              borderTop: "1px solid #A9DEA9",
+            }}>
+              Design Your Palette
             </Typography>
 
-
-            {/* ⭐ Updated styles for 50-50 buttons */}
             <ButtonContainer>
               <HalfButton
                 variant="contained"
@@ -262,7 +262,6 @@ handleSubmit(paletteData) {
 
           <Main open={open}>
             <DrawerHeader />
-
             <DraggableColorList
               colors={this.state.colors}
               removeColor={this.removeColor}

@@ -11,6 +11,8 @@ import BrushIcon from "@mui/icons-material/Brush";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 import { DRAWER_WIDTH } from "./styles/constants";
+import AICreationButton from "./AICreationButton";
+import AIInstructionsButton from "./AIInstructionsButton";
 
 const drawerWidth = DRAWER_WIDTH;
 
@@ -101,7 +103,11 @@ export default class PaletteFormNav extends Component {
 
             {/* RIGHT BUTTON GROUP */}
             <div style={{ display: "flex", gap: "10px", width: "260px" }}>
+
               <PaletteMetaForm handleSubmitPalette={this.submitLocal} />
+               <AICreationButton onAIResponse={this.props.onAIResponse} />
+               <AIInstructionsButton aiInstructions={this.props.aiInstructions} />
+
 
               <Button
                 variant="contained"
